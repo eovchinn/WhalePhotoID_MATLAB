@@ -7,6 +7,8 @@ This repository contains a [SIFT](http://www.vlfeat.org/overview/sift.html)-base
 
 ---
 
-***
-ALGORITHM DESCRIPTION
-***
+**HOW TO RUN**
+
+---
+
+**ALGORITHM DESCRIPTION**
