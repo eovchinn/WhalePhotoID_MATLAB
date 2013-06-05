@@ -9,6 +9,8 @@ This repository contains a [SIFT](http://www.vlfeat.org/overview/sift.html)-base
 
 **HOW TO RUN**
 
+Main script for running: `matching_siftbased_with_reduction´`
+
 ---
 
 **ALGORITHM DESCRIPTION**
