@@ -29,8 +29,8 @@ Main script for running: `matching_siftbased_with_reduction`
 **ALGORITHM DESCRIPTION**
 
 1. For each image find SIFT features (`vl_sift`)
-- Calculate SIFT features in the dilated inside-whale region, i.e. mask dilated by mask_height * mask_dilation_rad_percent. 
-- Find features with centers inside the eroded inside-whale region, i.e. mask eroded by mask_height * mask_erosion_rad_percent
+	- Calculate SIFT features in the dilated inside-whale region, i.e. mask dilated by mask_height * mask_dilation_rad_percent. 
+	- Find features with centers inside the eroded inside-whale region, i.e. mask eroded by mask_height * mask_erosion_rad_percent
 	
 2. Find matches of SIFT features for each two images (`vl_ubcmatch`)
 
