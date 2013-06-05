@@ -71,7 +71,6 @@ For each two images i1 and i2
 	Find mappings (l,lm) and (r,rm), where lm and rm are features in i2
 	If lm > rm on the horizontal scale
 	Then remove all matches between i1 and i2
-
 ```
 
 6. For each two images, output matches
