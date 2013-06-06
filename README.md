@@ -82,3 +82,17 @@ For each two images i1 and i2
 In the real use case, algorithm step 1 is done after an image is uploaded and the whale region is selected. 
 For each image, SIFT features (double matrix) are stored in the DB. Other steps are done when matching a new
 image with images stored in the DB.
+
+---
+
+**EXAMPLE**
+
+Different whales:
+
+![Fig.](https://raw.github.com/eovchinn/WhalePhotoID_MATLAB/master/imgs/197644226_604058ba71_o--4761279590_aa5069c279_o_features.png)
+
+Same whale:
+
+![Fig.](https://raw.github.com/eovchinn/WhalePhotoID_MATLAB/master/imgs/3899580142_edd4015731_o--3900667385_99c994378f_o_features.png)
+
+
