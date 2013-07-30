@@ -1,37 +1,49 @@
 %*********************************************************************************
-% This is a script used in the main file for matching images of whales (Matlab implementation)
+% This function performs the kNN-angles reduction of matched features to reduce the number of false positive matches (spatial configuration based reduction).
 % 
-% The script performs the kNN-angles reduction of matched features to reduce the number of false positive matches (spatial configuration based reduction).
+% Input:
+%   - F1im: coordinates of centers of matched SIFT features for image1
+%           // array of size 2x{number of features}
+%   - F2im: the same for image2
+%           // array of size 2x{number of features}
+%   - kNNangl_k: how many nearetst neighbors for a matcht SIFT feature are considered
+%           // integer, default=5
+%	- KNNANGL_RED_THRESH: allowed average difference between all angles formed by nearest neighbors in kNN-neighborhoods of two matched SIFT features
+%           // integer, default=15
+%   - kNN_k,KNN_RED_PARAM: see description in kNN_matches_reduction
 %
-% The script is called from the main file, has access to global variables, and creates a new global variable "kNNangl_inds". 
+% Output:
+%   - indices of pairs of SIFT features left after the reduction.
+%
 %
 % Theodore Alexandrov, Ekaterina Ovchinnikova, theodore@uni-bremen.de, katya@isi.edu
-% 05.06.2013
+% 05 June 2013
 %*********************************************************************************
 
-m1=matches(1,bothinside_mask); m1=m1(kNNred_inds); % matches for image 1
-m2=matches(2,bothinside_mask); m2=m2(kNNred_inds); % matches for image 2
+function kNNangl_inds = kNNangles_matches_reduction(F1im,F2im,kNNangl_k,KNNANGL_RED_THRESH,KNN_RED_PARAM)
 
-%%
-F1im=F1(:,m1); % matched features of image 1
-D1im=D1(:,m1);
-F2im=F2(:,m2); % matched features of image 2
-D2im=D2(:,m2);
 
 %% kNN-reduction
 kNNangl_inds=true(size(F1im,2),1); % indices of the matches left after this reduction
 order_nums=1:size(F1im,2); % number of features
 stop_reduction=false; % flag
-maxN=size(F1im,2); progressbar_step=10;
+maxN=size(F1im,2); 
+% progressbar_step=10;
 
 % iterate the reduction process
 anglediffs=zeros(kNNangl_k*(kNNangl_k-1)/2,1); % differences between angles will be stored
 while ~stop_reduction
+    %%---- kNNangles PART ----
+    %
+    % kNNangles part either removes one pair of features as the worst or
+    % stops iterating
+    %
+    
     N_features=sum(kNNangl_inds); % is changing in this cycle
     
 	% consider all features left after the last reduction step
-    F1im_r=F1im(1:2,kNNangl_inds); % image 1
-    F2im_r=F2im(1:2,kNNangl_inds); % image 2
+    F1im_r=F1im(:,kNNangl_inds); % image 1
+    F2im_r=F2im(:,kNNangl_inds); % image 2
 	
 	% get the order numbers of features considered at this step
     order_nums_r=order_nums(kNNangl_inds);
@@ -41,13 +53,19 @@ while ~stop_reduction
     %   _including_ the point itself, whereas we want it for kNNangl_k=5 
     %   to return 5 neighbors, not just 4
     kNN_idx1=knnsearch(F1im_r',F1im_r','K',kNNangl_k+1); % for image 1
-    kNN_idx2=knnsearch(F2im_r',F2im_r','K',kNNangl_k+1); % for image 2
+%     kNN_idx2=knnsearch(F2im_r',F2im_r','K',kNNangl_k+1); % for image 2
 	
 	% go over matched features 
     kNNangl_measure=zeros(N_features,1); % for storing kNN-rating (the number of kNN_2 neighbors which are different from kNN_1 neighbors) for each matched feature
     
     % go over features left after the last iteration of the reduction process
     for n=1:N_features
+        %>>>DBG
+%         if n==11
+%             fprintf('');
+%         end
+        %<<<DBG
+        
         kNN_1=kNN_idx1(n,:); % neighbors for n'th feature for image 1
 %         kNN_2=kNN_idx2(n,:); % neighbors for n'th feature for image 2
 		
@@ -114,12 +132,22 @@ while ~stop_reduction
     else
         stop_reduction=true;
     end
+    
+    %%---- kNN PART ----
+    %
+    % kNN part checks that the left pairs of features satisfy the kNN
+    % constraint
+    %
+    
+    kNNred_inds=kNN_matches_reduction(F1im(:,kNNangl_inds),F2im(:,kNNangl_inds),kNNangl_k,KNN_RED_PARAM);
+    
+    % update the kNNangl_inds
+    kNNangl_inds_truevals=find(kNNangl_inds>0);
+    kNNangl_inds_truevals_kNNred=kNNangl_inds_truevals(kNNred_inds);
+    kNNangl_inds(:)=false;
+    kNNangl_inds(kNNangl_inds_truevals_kNNred)=true;
+    
 end
 
-%% features left after reduction
-F1im_red=F1im(:,kNNangl_inds);
-D1im_red=D1im(:,kNNangl_inds);
-F2im_red=F2im(:,kNNangl_inds);
-D2im_red=D2im(:,kNNangl_inds);
 
 

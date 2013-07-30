@@ -29,12 +29,12 @@ Main script for running: `matching_siftbased_with_reduction`
 **ALGORITHM DESCRIPTION**
 
 1. For each image find SIFT features (`vl_sift`)
-	+ Calculate SIFT features in the dilated inside-whale region, i.e. mask dilated by mask_height * mask_dilation_rad_percent. 
+	+ Calculate SIFT features in the dilated inside-whale region, i.e. mask dilated by mask_height * mask_dilation_rad_percent
 	+ Find features with centers inside the eroded inside-whale region, i.e. mask eroded by mask_height * mask_erosion_rad_percent
 	
 2. Find matches of SIFT features for each two images (`vl_ubcmatch`)
 
-3. Reduce number of matches based on kNN_k (parameter) nearest neighbors of each match (`kNN_matches_reduction.m`)
+3. Reduce number of matches based on kNN_k (parameter) nearest neighbors of each match (`kNN_matches_reduction` with parameters kNN_k, KNN_RED_PARAM)
 ```
 For each two images i1 and i2
 	Iterate
@@ -47,7 +47,7 @@ For each two images i1 and i2
 		Else
 			stop iteration
 ```				
-4. Reduce number of matches based on pairwise angles between kNNangl_k (parameter) nearest neighbors of each match (`kNNangles_matches_reduction.m`)
+4. Reduce number of matches based on pairwise angles between kNNangl_k (parameter) nearest neighbors of each match (`kNNangles_matches_reduction`)
 ```
 For each two images i1 and i2, 
 	Iterate
@@ -60,11 +60,12 @@ For each two images i1 and i2,
 			compute the average difference over kNNangl_k maximal differences (average_diff(m1,m2))
 		If there is a match (mi,mj) with average_diff(mi,mj) > KNNANGL_RED_THRESH (parameter)
 		Then 
-			remove match (mk,mt) with max average_diff(mk,mt) 
+			remove match (mk,mt) with max average_diff(mk,mt)
+			reduce number of matches based on kNNangl_k (parameter) nearest neighbors of each match (`kNN_matches_reduction` with parameters kNNangl_k, KNN_RED_PARAM)
 		Else
 			stop iteration
 ```				
-5. TODO: remove matched feature configurations that are horizontally flipped
+5. Remove matched feature configurations that are horizontally flipped (`horientation_matches_reduction`)
 ```
 For each two images i1 and i2
 	Find the most left and right features (l and r) in i1 that are mapped to some features in i2
