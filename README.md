@@ -68,8 +68,8 @@ For each two images i1 and i2,
 5. Remove matched feature configurations that are horizontally flipped (`horientation_matches_reduction`)
 ```
 For each two images i1 and i2
-	Find the most left and right features (l and r) in i1 that are mapped to some features in i2
-	Find mappings (l,lm) and (r,rm), where lm and rm are features in i2
+	find the most left and right features (l and r) in i1 that are mapped to some features in i2
+	find mappings (l,lm) and (r,rm), where lm and rm are features in i2
 	If lm > rm on the horizontal scale
 	Then remove all matches between i1 and i2
 ```
