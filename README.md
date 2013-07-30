@@ -49,7 +49,7 @@ For each two images i1 and i2
 ```				
 4. Reduce number of matches based on pairwise angles between kNNangl_k (parameter) nearest neighbors of each match (`kNNangles_matches_reduction`)
 ```
-For each two images i1 and i2, 
+For each two images i1 and i2 
 	Iterate
 		For each match (m1,m2), where m1 is a feature in i1 and m2 is the matched feature in i2
 			find kNNangl_k nearest neighbors of m1 in i1 (NN1)
@@ -73,7 +73,6 @@ For each two images i1 and i2
 	If lm > rm on the horizontal scale
 	Then remove all matches between i1 and i2
 ```
-
 6. For each two images, output matches
 
 ---
