@@ -1,34 +1,39 @@
 %*********************************************************************************
-% This is a script used in the main file for matching images of whales (Matlab implementation)
+% This function performs the kNN-reduction of matched features to reduce the number of false positive matches (neighbor sets based reduction).
 % 
-% The script performs the kNN-reduction of matched features to reduce the number of false positive matches (neighbor sets based reduction).
+% Input:
+%   - F1im: coordinates of centers of matched SIFT features for image1
+%           // array of size 2x{number of features}
+%   - F2im: the same for image2
+%           // array of size 2x{number of features}
+%   - kNN_k: how many nearest neighbors for a matched SIFT feature are considered
+%           // integer, default=5
+%   - KNN_RED_PARAM: how many nearest neighbors can differ in between kNN-neighborhoods of two matched SIFT features
+%           // integer, default=1, 0 is the most strong reduction, larger values lead to less reduction
+% Output:
+%   - indices of pairs of SIFT features left after the reduction.
 %
-% The script is called from the main file, has access to global variables, and creates a new global variable "kNNred_inds". 
 %
 % Theodore Alexandrov, Ekaterina Ovchinnikova, theodore@uni-bremen.de, katya@isi.edu
-% 05 June 2013
+% 30 June 2013
 %*********************************************************************************
 
-m1=matches(1,bothinside_mask); % matches for image 1
-m2=matches(2,bothinside_mask); % matches for image 2
+function kNNred_inds = kNN_matches_reduction(F1im,F2im,kNN_k,KNN_RED_PARAM)
 
-%%
-F1im=F1(:,m1); % matched features of image 1
-D1im=D1(:,m1);
-F2im=F2(:,m2); % matched features of image 2
-D2im=D2(:,m2);
+
 
 %% kNN-reduction
 kNNred_inds=true(size(F1im,2),1); % indices of the matches left after this reduction
 order_nums=1:size(F1im,2); % number of features
 stop_reduction=false; % flag
-maxN=size(F1im,2); progressbar_step=10;
+maxN=size(F1im,2); 
+% progressbar_step=10;
 
 % iterate the reduction process
 while ~stop_reduction
 	% consider all features left after the last reduction step
-    F1im_r=F1im(1:2,kNNred_inds); % image 1
-    F2im_r=F2im(1:2,kNNred_inds); % image 2
+    F1im_r=F1im(:,kNNred_inds); % image 1
+    F2im_r=F2im(:,kNNred_inds); % image 2
 	
 	% get the order numbers of features considered at this step
     order_nums_r=order_nums(kNNred_inds);
@@ -61,56 +66,14 @@ while ~stop_reduction
         stop_reduction=true;
     end
     
-    % progress bar
-    N=size(F1im,2)-sum(kNNred_inds);
-    if ceil(N/maxN*progressbar_step) < ceil((N+1)/maxN*progressbar_step)
-        fprintf(1,'%.0f%% ', 100*N/maxN);
-    end
+%     % progress bar
+%     N=size(F1im,2)-sum(kNNred_inds);
+%     if ceil(N/maxN*progressbar_step) < ceil((N+1)/maxN*progressbar_step)
+%         fprintf(1,'%.0f%% ', 100*N/maxN);
+%     end
     
 end
 
-%% features left after reduction
-F1im_red=F1im(:,kNNred_inds);
-D1im_red=D1im(:,kNNred_inds);
-F2im_red=F2im(:,kNNred_inds);
-D2im_red=D2im(:,kNNred_inds);
 
 
-%% plot the features (not only centers of features) left after the reduction
-% figure(2)
-% subplot(211)
-% imshow(Iorig);
-% hold on
-% % plot(F1im(1,:),F1im(2,:),'rx')
-% plot(F1im_red(1,:),F1im_red(2,:),'gx')
-% % h1 = vl_plotframe(F1im_red); 
-% % h2 = vl_plotframe(F1im_red); 
-% % set(h2,'color','y','linewidth',2) ;
-% % set(h1,'color','k','linewidth',3) ;
-% 
-% % h3 = vl_plotsiftdescriptor(D1im_red,F1im_red);      
-% % set(h3,'color','g');
-% 
-% for n=1:size(F1im_red,2)
-%     text(F1im_red(1,n),F1im_red(2,n)+size(Iorig,2)*0.01,sprintf('%d',n),'Color','y','FontSize',8);
-% end
-% 
-% subplot(212)
-% imshow(Jorig);
-% hold on
-% % plot(F2im(1,:),F2im(2,:),'rx')
-% plot(F2im_red(1,:),F2im_red(2,:),'gx')
-% % h1 = vl_plotframe(F2im_red); 
-% % h2 = vl_plotframe(F2im_red); 
-% % set(h2,'color','y','linewidth',2) ;
-% % set(h1,'color','k','linewidth',3) ;
-% 
-% % h3 = vl_plotsiftdescriptor(D2im_red,F2im_red) ;  
-% % set(h3,'color','g') ;
-% 
-% for n=1:size(F2im_red,2)
-%         text(F2im_red(1,n),F2im_red(2,n)+size(Iorig,2)*0.01,sprintf('%d',n),'Color','y','FontSize',8);
-% end
-% 
-% suptitle(sprintf('%d matches found after reduction', sum(kNNred_inds)));
 
